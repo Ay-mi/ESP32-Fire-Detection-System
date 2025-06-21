@@ -24,6 +24,7 @@
 DHT dht(DHTPIN, DHTTYPE);
 #define INTERVAL 3000            // Interval at which to send sensor data (milliseconds)
 unsigned long previousMillis = 0; // Stores last time sensor data was sent
+int fireAlert = 0;
 
 char auth[] = BLYNK_AUTH_TOKEN;  // Blynk authorization token
 char ssid[] = "Redmi_Note_14";                // WiFi SSID
@@ -70,7 +71,7 @@ void setup() {
 
 }
 void loop() {
-  int fireAlert = 0;
+  
   Blynk.run();                   // Run Blynk process
   unsigned long currentMillis = millis(); // Get the current time
   // read sensors in loop and send information to Blynk
@@ -116,14 +117,15 @@ void decision(int co2, int ldr, float t, float hum){
   int ldrValue = ldr;
   float temp = t;
   float humidity = hum;
-  int fireAlert = 0;
   if(co2Value > 3000 || ldrValue > 4000 || temp > 120 || humidity < 20){
     fireAlert = 2;
   }
   else if(co2Value > 2500 || ldrValue > 3500 || temp > 70 || humidity < 40){
     fireAlert = 1;
   }
-
+  else{
+    fireAlert = 0;
+  }
   //LED Control
   if(temp > 70 || humidity < 40){
     digitalWrite(LED1, HIGH);
@@ -171,3 +173,4 @@ void decision(int co2, int ldr, float t, float hum){
     delay(5000);
   }
 }
+
